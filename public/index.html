@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Лабораторная №5 — Express</title>
+  <style>
+    :root{--ink:#18332d;--green:#13795b;--green-dark:#0b5b43;--mint:#e6f5ed;--muted:#62736d;--line:#dce8e1;--paper:#f7faf8;--white:#fff;--blue:#eaf2ff;--orange:#fff2dd}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--paper);color:var(--ink);font-family:Inter,Segoe UI,Arial,sans-serif;line-height:1.55}
+    .hero{background:linear-gradient(135deg,#103e32,#168565);color:white;padding:42px 20px 36px}
+    .hero-inner,.container{max-width:1180px;margin:0 auto}
+    .eyebrow{display:inline-block;border:1px solid #ffffff60;background:#ffffff16;border-radius:999px;padding:5px 12px;font-size:13px;font-weight:700;letter-spacing:.04em}
+    h1{font-size:clamp(28px,4vw,43px);line-height:1.15;margin:16px 0 12px}
+    .hero p{max-width:780px;color:#e2f7ec;margin:0;font-size:17px}
+    .hero-note{margin-top:20px;padding:12px 15px;border-left:3px solid #a8e5c5;background:#ffffff12;max-width:790px;border-radius:0 9px 9px 0;font-size:14px}
+    main.container{padding:25px 20px 60px}
+    .section-heading{display:flex;gap:16px;align-items:end;justify-content:space-between;margin:24px 0 14px;flex-wrap:wrap}
+    h2{font-size:24px;margin:0}
+    .muted{color:var(--muted);margin:4px 0 0}
+    .pill{display:inline-flex;background:var(--mint);color:var(--green-dark);border-radius:999px;padding:5px 10px;font-size:12px;font-weight:700}
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:14px}
+    .card{background:var(--white);border:1px solid var(--line);border-radius:15px;padding:17px;display:flex;flex-direction:column;min-height:164px;box-shadow:0 4px 14px #1b47300a}
+    .card-top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:9px}
+    .num{font-size:12px;font-weight:800;color:var(--green);background:var(--mint);border-radius:8px;padding:4px 8px}
+    .kind{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+    .card h3{font-size:17px;margin:0 0 6px}
+    .card p{font-size:13.5px;color:var(--muted);margin:0 0 13px;flex:1}
+    .card a{color:var(--green-dark);font-weight:750;text-decoration:none;border-top:1px solid #edf2ee;padding-top:10px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+    .card a:hover{text-decoration:underline}
+    .route{font-size:12px;font-weight:500;color:var(--muted);overflow-wrap:anywhere}
+    .panel{background:white;border:1px solid var(--line);border-radius:16px;padding:22px;margin-top:22px}
+    .panel-head{display:flex;align-items:start;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+    .panel h2{font-size:22px}
+    .tag{font-size:12px;border-radius:8px;background:var(--blue);padding:5px 9px;color:#31538d;font-weight:700}
+    form{display:flex;flex-wrap:wrap;align-items:end;gap:12px}
+    .field{display:flex;flex-direction:column;gap:5px;min-width:160px;flex:1}
+    label{font-size:13px;font-weight:700;color:#345149}
+    input{border:1px solid #cbdcd2;border-radius:9px;padding:10px 12px;font:inherit;width:100%;background:#fcfefd;color:var(--ink)}
+    input:focus{outline:2px solid #8acdb0;border-color:var(--green)}
+    button{border:0;border-radius:9px;padding:10px 15px;background:var(--green);color:white;font:inherit;font-weight:750;cursor:pointer}
+    button:hover{background:var(--green-dark)}
+    button.secondary{background:#edf3ef;color:var(--ink);border:1px solid var(--line)}
+    .result{margin:12px 0 0;color:var(--green-dark);font-weight:650;overflow-wrap:anywhere}
+    table{border-collapse:collapse;width:100%;margin-top:14px}
+    th,td{text-align:left;padding:10px;border-bottom:1px solid var(--line);font-size:14px}
+    th{background:#f2f8f4}
+    .table-wrap{overflow-x:auto}
+    .small{font-size:13px;color:var(--muted)}
+    code{background:#f0f5f1;padding:2px 5px;border-radius:5px}
+    footer{padding:22px 20px;text-align:center;color:var(--muted);font-size:13px;border-top:1px solid var(--line);background:white}
+    @media(max-width:580px){.hero{padding-top:30px}.panel{padding:16px}.cards{grid-template-columns:1fr}.field{min-width:100%}}
+  </style>
+</head>
+<body>
+<header class="hero">
+  <div class="hero-inner">
+    <span class="eyebrow">LAB №5 · NODE.JS</span>
+    <h1>Express — практикалық зертхана</h1>
+    <p>19 тақырып бір проектте. Әр карточка тиісті мысалды ашады; қысқаша сипаттамада оның не көрсететіні жазылған.</p>
+    <div class="hero-note">Негізгі логика: <b>ссылка немесе форма → HTTP сұранысы → Express маршруты → жауап</b>. Серверді іске қосу: <code>node app.js</code>.</div>
+  </div>
+</header>
+<main class="container">
+  <div class="section-heading">
+    <div><h2>Тақырыптар мен мысалдар</h2><p class="muted">Карточканы басып, тақырыптың нәтижесін тексер.</p></div>
+    <span class="pill">19 практикалық тақырып</span>
+  </div>
+
+  <section class="cards" aria-label="19 Express тақырыбы">
+    <article class="card"><div class="card-top"><span class="num">01</span><span class="kind">Basics</span></div><h3>Express-пен бастау</h3><p>Қосымша құру, GET маршруты және серверден алғашқы жауап алу.</p><a href="/hello"><span>Мысалды ашу</span><span class="route">/hello →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">02</span><span class="kind">Middleware</span></div><h3>Middleware және next()</h3><p>Сұранысты аралық өңдеу; екі функция терминалға хабар шығарады.</p><a href="/middleware-demo"><span>Тізбекті тексеру</span><span class="route">/middleware-demo →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">03</span><span class="kind">Response</span></div><h3>Жауап жіберу</h3><p>HTML/text, JSON, файл және арнайы HTTP 404 статусын салыстыру.</p><a href="/response"><span>res.send()</span><span class="route">/response →</span></a><a href="/response/json"><span>JSON жауабы</span><span class="route">/response/json →</span></a><a href="/response/file"><span>Файл жіберу</span><span class="route">/response/file →</span></a><a href="/response/404"><span>404 мысалы</span><span class="route">/response/404 →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">04</span><span class="kind">Static files</span></div><h3>Статикалық файл</h3><p>public папкасындағы дайын HTML-ды express.static арқылы беру.</p><a href="/about.html"><span>about.html ашу</span><span class="route">/about.html →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">05</span><span class="kind">Routing</span></div><h3>Маршрутизация</h3><p>Әр түрлі URL үшін бөлек өңдегіш жазу: About және Contact.</p><a href="/about"><span>About маршруты</span><span class="route">/about →</span></a><a href="/contact"><span>Contact маршруты</span><span class="route">/contact →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">06</span><span class="kind">Redirect</span></div><h3>Переадресация</h3><p>Сервер браузерді /about адресіне автоматты бағыттайды.</p><a href="/redirect"><span>Redirect тексеру</span><span class="route">/redirect →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">07</span><span class="kind">Query</span></div><h3>Query параметрлері</h3><p>URL ішіндегі ?id=3&amp;name=Tom мәндерін req.query арқылы алу.</p><a href="/query?id=3&name=Tom"><span>Мысал сұраныс</span><span class="route">/query?id=3… →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">08</span><span class="kind">HTML Form / POST</span></div><h3>POST форма</h3><p>Ат пен жасты кәдімгі HTML форма арқылы серверге жіберу.</p><a href="/#post-form"><span>Формаға өту</span><span class="route">POST /form →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">09</span><span class="kind">Route params</span></div><h3>Маршрут параметрі</h3><p>/products/:productId ішіндегі нақты ID-ді req.params арқылы алу.</p><a href="/products/10"><span>Product 10</span><span class="route">/products/10 →</span></a><a href="/products/25"><span>Product 25</span><span class="route">/products/25 →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">10</span><span class="kind">Router</span></div><h3>express.Router()</h3><p>Өнімдер тізімін, қосу мысалын және ID маршрутын бір топқа жинау.</p><a href="/router/products"><span>Router — тізім</span><span class="route">/router/products →</span></a><a href="/router/products/create"><span>Қосу мысалы</span><span class="route">/router/products/create →</span></a><a href="/router/products/10"><span>ID мысалы</span><span class="route">/router/products/10 →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">11</span><span class="kind">JSON / AJAX</span></div><h3>JSON және AJAX</h3><p>fetch() арқылы JSON жіберу; жауапты бет жаңартылмай көрсету.</p><a href="/#ajax-demo"><span>AJAX формасына өту</span><span class="route">POST /user →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">12</span><span class="kind">Handlebars</span></div><h3>Негізгі шаблон</h3><p>Модельдегі title, email және phone мәндерін .hbs бетіне беру.</p><a href="/hbs"><span>Handlebars беті</span><span class="route">/hbs →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">13</span><span class="kind">Partials</span></div><h3>Handlebars partials</h3><p>Ортақ мәзір мен footer-ді басқа шаблонға қосу.</p><a href="/hbs/partials"><span>Partial views</span><span class="route">/hbs/partials →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">14</span><span class="kind">Layout</span></div><h3>Handlebars layout</h3><p>Ортақ макетке жеке беттің мазмұнын енгізу.</p><a href="/hbs/layout"><span>Layout мысалы</span><span class="route">/hbs/layout →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">15</span><span class="kind">Helpers</span></div><h3>Handlebars helpers</h3><p>Helper арқылы уақытты және массивтен HTML тізімін жасау.</p><a href="/hbs/helpers"><span>Helpers мысалы</span><span class="route">/hbs/helpers →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">16</span><span class="kind">EJS</span></div><h3>EJS шаблоны</h3><p>Динамикалық мәндер, шарт, цикл және include қолдану.</p><a href="/ejs/contact"><span>EJS контактілері</span><span class="route">/ejs/contact →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">17</span><span class="kind">Pug</span></div><h3>Pug шаблоны</h3><p>HTML-ды қысқа синтаксиспен көрсету, массивті циклмен шығару.</p><a href="/pug/contact"><span>Pug контактілері</span><span class="route">/pug/contact →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">18</span><span class="kind">Pug Layout</span></div><h3>Pug partials және layout</h3><p>extends, block және include арқылы ортақ құрылым жасау.</p><a href="/pug/layout"><span>Pug layout</span><span class="route">/pug/layout →</span></a></article>
+    <article class="card"><div class="card-top"><span class="num">19</span><span class="kind">REST API</span></div><h3>REST API: пайдаланушылар</h3><p>GET, POST, PUT, DELETE арқылы пайдаланушыларды қосу, көру, өзгерту, өшіру.</p><a href="/#api-demo"><span>API интерфейсіне өту</span><span class="route">/api/users →</span></a></article>
+  </section>
+
+  <section class="panel" id="post-form">
+    <div class="panel-head"><div><h2>08 · Кәдімгі POST форма</h2><p class="muted">Бұл форма application/x-www-form-urlencoded форматымен жіберіледі және сервер жауабы жаңа бетте ашылады.</p></div><span class="tag">POST /form</span></div>
+    <form action="/form" method="post">
+      <div class="field"><label for="userName">Аты</label><input id="userName" name="userName" required placeholder="Мысалы, Arman"></div>
+      <div class="field"><label for="userAge">Жасы</label><input id="userAge" name="userAge" type="number" min="1" required placeholder="Мысалы, 21"></div>
+      <button type="submit">Форманы жіберу</button>
+    </form>
+  </section>
+
+  <section class="panel" id="ajax-demo">
+    <div class="panel-head"><div><h2>11 · JSON / AJAX</h2><p class="muted">fetch() JSON жібереді; жауап осы жерде шығады, бет толық жаңартылмайды.</p></div><span class="tag">POST /user</span></div>
+    <form id="ajaxForm">
+      <div class="field"><label for="ajaxName">Аты</label><input id="ajaxName" name="name" required placeholder="Мысалы, Ayan"></div>
+      <div class="field"><label for="ajaxAge">Жасы</label><input id="ajaxAge" name="age" type="number" min="1" required placeholder="Мысалы, 20"></div>
+      <button type="submit">JSON жіберу</button>
+    </form>
+    <p class="result" id="ajaxResult" aria-live="polite"></p>
+  </section>
+
+  <section class="panel" id="api-demo">
+    <div class="panel-head"><div><h2>19 · REST API — пайдаланушылар</h2><p class="muted">Пайдаланушыны қос, өзгерту үшін «Өзгерту» батырмасын бас, немесе өшір. Мәлімет сервердің уақытша массивінде сақталады.</p></div><span class="tag">GET · POST · PUT · DELETE</span></div>
+    <form id="apiForm">
+      <input type="hidden" id="apiId" name="id" value="">
+      <div class="field"><label for="apiName">Аты</label><input id="apiName" name="name" required placeholder="Пайдаланушы аты"></div>
+      <div class="field"><label for="apiAge">Жасы</label><input id="apiAge" name="age" type="number" min="1" required placeholder="Жасы"></div>
+      <button type="submit" id="apiSave">Қосу</button>
+      <button type="button" class="secondary" id="apiReset">Тазалау</button>
+    </form>
+    <p class="result" id="apiMessage" aria-live="polite"></p>
+    <div class="table-wrap"><table><thead><tr><th>ID</th><th>Аты</th><th>Жасы</th><th>Әрекет</th></tr></thead><tbody id="usersBody"><tr><td colspan="4" class="small">Жүктелуде…</td></tr></tbody></table></div>
+    <p class="small">Ескерту: бұл оқу мысалы. Сервер қайта іске қосылғанда уақытша массив босайды; деректер файлға немесе базаға сақталмайды.</p>
+  </section>
+</main>
+<footer>Зертханалық жұмыс №5 · Express · Барлық сілтемелер осы жергілікті проект мысалдарына апарады.</footer>
+<script>
+// 11. JSON және AJAX: форма жіберілгенде бетті қайта жүктемей, fetch() қолданамыз.
+document.getElementById("ajaxForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const name = document.getElementById("ajaxName").value;
+  const age = document.getElementById("ajaxAge").value;
+  const result = document.getElementById("ajaxResult");
+
+  try {
+    const response = await fetch("/user", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, age })
+    });
+    const data = await response.json();
+    result.textContent = data.message;
+  } catch (error) {
+    result.textContent = "Серверге қосылу мүмкін болмады.";
+  }
+});
+
+// 19. REST API клиенті: GET арқылы оқу, POST арқылы қосу, PUT арқылы өзгерту, DELETE арқылы өшіру.
+const apiForm = document.getElementById("apiForm");
+const apiId = document.getElementById("apiId");
+const apiName = document.getElementById("apiName");
+const apiAge = document.getElementById("apiAge");
+const apiSave = document.getElementById("apiSave");
+const apiMessage = document.getElementById("apiMessage");
+const usersBody = document.getElementById("usersBody");
+
+async function loadUsers() {
+  const response = await fetch("/api/users");
+  const users = await response.json();
+  usersBody.replaceChildren();
+
+  if (users.length === 0) {
+    const row = document.createElement("tr");
+    const cell = document.createElement("td");
+    cell.colSpan = 4;
+    cell.className = "small";
+    cell.textContent = "Әзірге пайдаланушы жоқ. Форманы толтырып, қос.";
+    row.append(cell);
+    usersBody.append(row);
+    return;
+  }
+
+  users.forEach((user) => {
+    const row = document.createElement("tr");
+    [user.id, user.name, user.age].forEach((value) => {
+      const cell = document.createElement("td");
+      cell.textContent = value;
+      row.append(cell);
+    });
+
+    const actions = document.createElement("td");
+    const editButton = document.createElement("button");
+    editButton.type = "button";
+    editButton.textContent = "Өзгерту";
+    editButton.addEventListener("click", () => {
+      apiId.value = user.id;
+      apiName.value = user.name;
+      apiAge.value = user.age;
+      apiSave.textContent = "Сақтау";
+      apiMessage.textContent = "Пайдаланушыны өзгертіп, сақта.";
+    });
+
+    const deleteButton = document.createElement("button");
+    deleteButton.type = "button";
+    deleteButton.className = "secondary";
+    deleteButton.style.marginLeft = "6px";
+    deleteButton.textContent = "Өшіру";
+    deleteButton.addEventListener("click", async () => {
+      const result = await fetch("/api/users/" + encodeURIComponent(user.id), { method: "DELETE" });
+      const data = await result.json();
+      apiMessage.textContent = result.ok ? `Өшірілді: ${data.name}` : data.message;
+      await loadUsers();
+    });
+
+    actions.append(editButton, deleteButton);
+    row.append(actions);
+    usersBody.append(row);
+  });
+}
+
+apiForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const isEditing = Boolean(apiId.value);
+  const body = { name: apiName.value, age: Number(apiAge.value) };
+  let url = "/api/users";
+  let method = "POST";
+
+  if (isEditing) {
+    body.id = apiId.value;
+    method = "PUT";
+  }
+
+  const response = await fetch(url, {
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body)
+  });
+  const data = await response.json();
+  apiMessage.textContent = response.ok
+    ? (isEditing ? "Пайдаланушы өзгертілді." : "Пайдаланушы қосылды.")
+    : data.message;
+
+  if (response.ok) {
+    apiForm.reset();
+    apiId.value = "";
+    apiSave.textContent = "Қосу";
+    await loadUsers();
+  }
+});
+
+document.getElementById("apiReset").addEventListener("click", () => {
+  apiForm.reset();
+  apiId.value = "";
+  apiSave.textContent = "Қосу";
+  apiMessage.textContent = "Форма тазаланды.";
+});
+
+loadUsers().catch(() => {
+  usersBody.textContent = "API қолжетімсіз. app.js сервері іске қосылғанын тексер.";
+});
+</script>
+</body>
+</html>
+
