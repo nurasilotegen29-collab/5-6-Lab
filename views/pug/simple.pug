@@ -1,0 +1,22 @@
+doctype html
+html(lang="ru")
+  head
+    meta(charset="UTF-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    title= title
+    style.
+      body { font-family: Arial, sans-serif; max-width: 760px; margin: 35px auto; padding: 0 18px; color: #18332d; line-height: 1.6; }
+      a { color: #13795b; }
+  body
+    h1= title
+    if emailsVisible
+      h2 Электронные адреса
+      ul
+        each email in emails
+          li= email
+    else
+      p Электронные адреса не отображаются.
+    p Телефон: #{phone}
+    p Этот файл показывает базовый синтаксис Pug: теги, данные, условия и цикл.
+    a(href="/") ← На главную
+
