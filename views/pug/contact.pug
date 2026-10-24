@@ -1,0 +1,14 @@
+extends layout.pug
+
+block content
+  h1= title
+  if emailsVisible
+    h2 Электронные адреса
+    ul
+      each email in emails
+        li= email
+  else
+    p Электронные адреса не отображаются.
+  p Телефон: #{phone}
+  p Эта страница использует шаблон Pug. Её структуру удобно читать по отступам.
+
